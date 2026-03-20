@@ -111,11 +111,11 @@ export function PermissionDialog({ permission }: PermissionDialogProps) {
         <button
           onClick={() => {
             const dangerousTools = ['bash', 'write', 'edit', 'execute_command'];
-            const isDangerous = dangerousTools.some(t => permission.toolName?.toLowerCase().includes(t));
+            const isDangerous = dangerousTools.some(tool => permission.toolName?.toLowerCase().includes(tool));
 
             if (isDangerous) {
               const confirmed = window.confirm(
-                `Are you sure you want to always allow "${permission.toolName}"? This tool can modify your system.`
+                t('permission.alwaysAllowConfirm', { toolName: permission.toolName })
               );
               if (!confirmed) return;
             }

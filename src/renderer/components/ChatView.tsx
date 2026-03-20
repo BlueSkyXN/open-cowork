@@ -24,6 +24,7 @@ export function ChatView() {
   const activeTurnsBySession = useAppStore((s) => s.activeTurnsBySession);
   const pendingTurnsBySession = useAppStore((s) => s.pendingTurnsBySession);
   const executionClockBySession = useAppStore((s) => s.executionClockBySession);
+  const setGlobalNotice = useAppStore((s) => s.setGlobalNotice);
   const appConfig = useAppStore((s) => s.appConfig);
   const { continueSession, stopSession, isElectron } = useIPC();
   const [prompt, setPrompt] = useState('');
@@ -274,6 +275,7 @@ export function ChatView() {
         });
       } catch (err) {
         console.error('Failed to process pasted image:', err);
+        setGlobalNotice({ id: `image-paste-error-${Date.now()}`, type: 'error', message: t('chat.imageProcessError') });
       }
     }
 
@@ -456,6 +458,7 @@ export function ChatView() {
           });
         } catch (err) {
           console.error('Failed to process dropped image:', err);
+          setGlobalNotice({ id: `image-drop-error-${Date.now()}`, type: 'error', message: t('chat.imageProcessError') });
         }
       }
 
@@ -768,6 +771,7 @@ export function ChatView() {
                 onClick={handleFileSelect}
                 className="w-9 h-9 rounded-2xl flex items-center justify-center text-text-muted hover:text-text-primary hover:bg-surface-hover transition-colors"
                 title={t('welcome.attachFiles')}
+                aria-label={t('welcome.attachFiles')}
               >
                 <Plus className="w-5 h-5" />
               </button>
@@ -811,6 +815,7 @@ export function ChatView() {
                     onClick={handleStop}
                     className="w-9 h-9 rounded-2xl flex items-center justify-center bg-error/10 text-error hover:bg-error/20 transition-colors"
                     title={t('chat.stop')}
+                    aria-label={t('chat.stop')}
                   >
                     <Square className="w-4 h-4" />
                   </button>
@@ -826,6 +831,7 @@ export function ChatView() {
                   }
                   className="w-9 h-9 rounded-2xl flex items-center justify-center bg-accent text-background disabled:opacity-50 disabled:cursor-not-allowed hover:bg-accent-hover transition-colors"
                   title={t('chat.sendMessage')}
+                  aria-label={t('chat.sendMessage')}
                 >
                   <Send className="w-4 h-4" />
                 </button>

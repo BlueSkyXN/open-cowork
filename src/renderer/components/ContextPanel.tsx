@@ -360,12 +360,11 @@ export function ContextPanel() {
                     : iconComponent === 'text' ? File
                     : File;
 
-                  return (
-                    <div
+                  return canClick ? (
+                    <button
                       key={artifact.path || artifact.label || `artifact-${index}`}
-                      className={`flex items-center gap-2 px-4 py-1.5 transition-colors ${canClick ? 'cursor-pointer hover:bg-surface-hover' : ''}`}
+                      className="flex items-center gap-2 px-4 py-1.5 transition-colors cursor-pointer hover:bg-surface-hover w-full text-left"
                       onClick={async () => {
-                        if (!canClick) return;
                         const revealed = await window.electronAPI.showItemInFolder(artifactPath, currentWorkingDir ?? undefined);
                         if (!revealed) {
                           setGlobalNotice({
@@ -375,6 +374,16 @@ export function ContextPanel() {
                           });
                         }
                       }}
+                      title={artifactPath || undefined}
+                      aria-label={label}
+                    >
+                      <IconComponent className="w-3.5 h-3.5 text-text-muted shrink-0" />
+                      <span className="text-xs text-text-primary truncate">{label}</span>
+                    </button>
+                  ) : (
+                    <div
+                      key={artifact.path || artifact.label || `artifact-${index}`}
+                      className="flex items-center gap-2 px-4 py-1.5"
                       title={artifactPath || undefined}
                     >
                       <IconComponent className="w-3.5 h-3.5 text-text-muted shrink-0" />
@@ -396,13 +405,20 @@ export function ContextPanel() {
           </p>
           <div className="flex items-center gap-1.5 min-w-0">
             <FolderOpen className="w-3.5 h-3.5 text-text-muted shrink-0" />
-            <span
-              className={`text-xs truncate flex-1 ${currentWorkingDir ? 'text-text-primary cursor-pointer hover:text-accent-primary transition-colors' : 'text-text-muted'}`}
-              title={currentWorkingDir ? t('context.openInFileManager') : ''}
-              onClick={() => currentWorkingDir && window.electronAPI?.showItemInFolder(currentWorkingDir)}
-            >
-              {currentWorkingDir ? formatPath(currentWorkingDir) : t('context.noFolderSelected')}
-            </span>
+            {currentWorkingDir ? (
+              <button
+                className="text-xs truncate flex-1 text-text-primary cursor-pointer hover:text-accent-primary transition-colors text-left"
+                title={t('context.openInFileManager')}
+                aria-label={t('context.openInFileManager')}
+                onClick={() => window.electronAPI?.showItemInFolder(currentWorkingDir)}
+              >
+                {formatPath(currentWorkingDir)}
+              </button>
+            ) : (
+              <span className="text-xs truncate flex-1 text-text-muted">
+                {t('context.noFolderSelected')}
+              </span>
+            )}
             {currentWorkingDir && (
               <button
                 onClick={() => handleCopyPath(currentWorkingDir)}

@@ -605,6 +605,7 @@
     "startFailed": "启动会话失败，请稍后重试。",
     "disclaimer": "Open Cowork 由 AI 驱动，可能会出错，请务必自行复核结果。",
     "noModel": "无模型",
+    "imageProcessError": "图片处理失败，文件可能已损坏或格式不支持。",
     "connectorCount_one": "{{count}} 个连接器",
     "connectorCount_other": "{{count}} 个连接器"
   },
@@ -848,6 +849,7 @@
     "deny": "拒绝",
     "allow": "允许",
     "alwaysAllow": "始终允许此工具",
+    "alwaysAllowConfirm": "确定要始终允许 \"{{toolName}}\" 吗？此工具可以修改你的系统。",
     "useTool": "使用 {{toolName}} 工具",
     "toolDescriptions": {
       "write": "写入系统文件",

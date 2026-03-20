@@ -36,6 +36,7 @@ export function Titlebar() {
             onClick={handleMinimize}
             className="w-12 h-full flex items-center justify-center hover:bg-surface transition-colors"
             title={t('window.minimize')}
+            aria-label={t('window.minimize')}
           >
             <Minus className="w-4 h-4 text-text-secondary" />
           </button>
@@ -43,6 +44,7 @@ export function Titlebar() {
             onClick={handleMaximize}
             className="w-12 h-full flex items-center justify-center hover:bg-surface transition-colors"
             title={isMaximized ? t('window.restore') : t('window.maximize')}
+            aria-label={isMaximized ? t('window.restore') : t('window.maximize')}
           >
             {isMaximized ? (
               <Copy className="w-3.5 h-3.5 text-text-secondary" />
@@ -54,6 +56,7 @@ export function Titlebar() {
             onClick={handleClose}
             className="w-12 h-full flex items-center justify-center hover:bg-red-500 transition-colors group"
             title={t('window.close')}
+            aria-label={t('window.close')}
           >
             <X className="w-4 h-4 text-text-secondary group-hover:text-white" />
           </button>

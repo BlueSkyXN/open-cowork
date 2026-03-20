@@ -605,6 +605,7 @@
     "startFailed": "Failed to start session. Please try again.",
     "disclaimer": "Open Cowork is AI-powered and may make mistakes. Please double-check responses.",
     "noModel": "No model",
+    "imageProcessError": "Failed to process image. The file may be corrupt or unsupported.",
     "connectorCount_one": "{{count}} connector",
     "connectorCount_other": "{{count}} connectors"
   },
@@ -804,7 +805,7 @@
     "localWebhookUrl": "Local webhook URL",
     "useBuiltInNgrok": "Use built-in ngrok",
     "ngrokHelpPrefix": "Get one for free from",
-    "ngrokHelpSuffix": "",
+    "ngrokHelpSuffix": "Get for free",
     "tunnelConnected": "Tunnel connected",
     "longConnectionHint": "In Feishu Open Platform, go to Events & Callbacks > Event Configuration and switch the subscription mode to long connection.",
     "advancedTitle": "Advanced settings",
@@ -848,6 +849,7 @@
     "deny": "Deny",
     "allow": "Allow",
     "alwaysAllow": "Always allow this tool",
+    "alwaysAllowConfirm": "Are you sure you want to always allow \"{{toolName}}\"? This tool can modify your system.",
     "useTool": "Use the {{toolName}} tool",
     "toolDescriptions": {
       "write": "Write to files on your system",

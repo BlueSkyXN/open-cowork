@@ -23,6 +23,10 @@ export function GlobalNoticeToast({ notice, onDismiss, onAction }: Props) {
     if (!notice) {
       return;
     }
+    // Only auto-dismiss info and success toasts; keep errors/warnings visible
+    if (notice.type === 'error' || notice.type === 'warning') {
+      return;
+    }
     const timer = setTimeout(() => {
       onDismiss();
     }, 6000);
