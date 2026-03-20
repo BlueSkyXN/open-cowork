@@ -8,6 +8,8 @@ export type CommonProviderSetupId =
   | 'ollama'
   | 'gemini-custom'
   | 'minimax'
+  | 'grok'
+  | 'volcengine'
   | 'generic-openai';
 
 export interface CommonProviderSetup {
@@ -137,6 +139,32 @@ export const COMMON_PROVIDER_SETUPS: CommonProviderSetup[] = [
       hosts: ['api.minimax.chat'],
       hostContains: ['minimax'],
       pathPrefixes: ['/v1'],
+    },
+  },
+  {
+    id: 'grok',
+    nameKey: 'api.guidance.setups.grok.name',
+    noteKey: 'api.guidance.setups.grok.note',
+    applyProvider: 'custom',
+    recommendedProtocol: 'openai',
+    recommendedBaseUrl: 'https://api.x.ai/v1',
+    exampleModel: 'grok-code-fast-1',
+    matcher: {
+      hosts: ['api.x.ai'],
+      pathPrefixes: ['/v1'],
+    },
+  },
+  {
+    id: 'volcengine',
+    nameKey: 'api.guidance.setups.volcengine.name',
+    noteKey: 'api.guidance.setups.volcengine.note',
+    applyProvider: 'custom',
+    recommendedProtocol: 'openai',
+    recommendedBaseUrl: 'https://ark.cn-beijing.volces.com/api/v3',
+    exampleModel: 'doubao-1.5-pro-256k',
+    matcher: {
+      hostContains: ['volces.com', 'volcengine'],
+      pathPrefixes: ['/api/v3'],
     },
   },
   {

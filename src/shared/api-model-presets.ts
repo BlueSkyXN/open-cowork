@@ -105,6 +105,7 @@ export const API_PROVIDER_PRESETS: SharedProviderPresets = {
       { id: 'MiniMax-M2.5', name: 'MiniMax-M2.5' },
       { id: 'qwen-max', name: 'qwen-max' },
       { id: 'grok-code-fast-1', name: 'grok-code-fast-1' },
+      { id: 'doubao-1.5-pro-256k', name: 'doubao-1.5-pro-256k' },
       { id: 'mistral-large-latest', name: 'mistral-large-latest' },
     ],
     keyPlaceholder: 'sk-xxx',
@@ -153,7 +154,7 @@ export function getModelInputGuidance(
 
   if (provider === 'custom' && customProtocol === 'openai') {
     return {
-      placeholder: 'deepseek-chat, deepseek-reasoner, qwen-max, gpt-4.1',
+      placeholder: 'deepseek-chat, deepseek-reasoner, qwen-max, doubao-1.5-pro-256k, grok-code-fast-1',
       hint: 'Use the exact model ID for the selected protocol or endpoint.',
     };
   }

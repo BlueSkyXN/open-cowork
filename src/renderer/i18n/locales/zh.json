@@ -230,6 +230,14 @@
           "name": "MiniMax",
           "note": "除非网关文档明确说明其他协议，否则优先按 OpenAI 兼容协议配置。"
         },
+        "grok": {
+          "name": "Grok (xAI)",
+          "note": "xAI 的 Grok 系列模型，通过 api.x.ai 访问，使用 OpenAI 兼容协议。"
+        },
+        "volcengine": {
+          "name": "豆包 (火山引擎)",
+          "note": "字节跳动豆包模型，通过火山引擎方舟平台访问，使用 OpenAI 兼容协议。"
+        },
         "genericOpenAI": {
           "name": "通用 OpenAI 兼容服务",
           "note": "适用于自定义中继、网关或模拟 OpenAI API 的推理服务。"

@@ -230,6 +230,14 @@
           "name": "MiniMax",
           "note": "Use OpenAI-compatible mode unless your MiniMax gateway documents another protocol."
         },
+        "grok": {
+          "name": "Grok (xAI)",
+          "note": "xAI's Grok models via api.x.ai. Uses OpenAI-compatible protocol."
+        },
+        "volcengine": {
+          "name": "Doubao (Volcengine)",
+          "note": "ByteDance's Doubao models via Volcengine Ark. Uses OpenAI-compatible protocol."
+        },
         "genericOpenAI": {
           "name": "Generic OpenAI-compatible",
           "note": "Use this for custom relays, gateways, or inference servers that mimic the OpenAI API."
