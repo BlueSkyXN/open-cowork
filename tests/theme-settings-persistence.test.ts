@@ -13,11 +13,13 @@ describe('theme settings persistence', () => {
 
     expect(source).toContain("const DARK_BG = '#171614';");
     expect(source).toContain("const LIGHT_BG = '#f5f3ed';");
-    expect(source).toContain("const WHITE_BG = '#f7f9fc';");
+    expect(source).toContain("const WHITE_BG = '#fafafa';");
+    expect(source).toContain("const BLUE_BG = '#f7f9fc';");
     expect(source).toContain("configStore.update({ theme: nextTheme });");
-    expect(source).toContain("nativeTheme.themeSource = theme === 'white' ? 'light' : theme;");
+    expect(source).toContain("nativeTheme.themeSource = (theme === 'white' || theme === 'blue') ? 'light' : theme;");
     expect(source).toContain('mainWindow.setBackgroundColor(');
     expect(source).toContain("|| event.payload.theme === 'white'");
+    expect(source).toContain("|| event.payload.theme === 'blue'");
     expect(source).toContain("getSavedThemePreference() === 'system'");
     expect(source).toContain('return { shouldUseDarkColors: getSystemShouldUseDarkColors() };');
     expect(source).not.toContain("case 'settings.update':\n      // TODO: Implement settings update");

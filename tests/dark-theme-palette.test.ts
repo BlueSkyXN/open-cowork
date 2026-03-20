@@ -18,12 +18,16 @@ describe('theme palettes', () => {
     expect(source).toContain('--color-accent-hover: #c56c46;');
   });
 
-  it('defines a distinct white theme palette instead of reusing the warm light tokens', () => {
+  it('defines distinct white and blue theme palettes', () => {
     const source = fs.readFileSync(stylesPath, 'utf8');
+    // White: genuine neutral theme
     expect(source).toContain('.white {');
+    expect(source).toContain('--color-background: #fafafa;');
+    // Blue: the original blue-tinted aesthetic (renamed from white)
+    expect(source).toContain('.blue {');
     expect(source).toContain('--color-background: #f7f9fc;');
     expect(source).toContain('--color-surface: #ffffff;');
     expect(source).toContain('--color-accent: #5f74ff;');
-    expect(source).toContain('.white body {');
+    expect(source).toContain('.blue body {');
   });
 });
