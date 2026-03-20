@@ -13,7 +13,7 @@ describe('theme settings persistence', () => {
 
     expect(source).toContain("const DARK_BG = '#171614';");
     expect(source).toContain("const LIGHT_BG = '#f5f3ed';");
-    expect(source).toContain("const WHITE_BG = '#faf9f7';");
+    expect(source).toContain("const WHITE_BG = '#f7f9fc';");
     expect(source).toContain("configStore.update({ theme: nextTheme });");
     expect(source).toContain("nativeTheme.themeSource = theme === 'white' ? 'light' : theme;");
     expect(source).toContain('mainWindow.setBackgroundColor(');

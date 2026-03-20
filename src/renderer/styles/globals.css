@@ -60,28 +60,36 @@
 
   /* White theme override — cleaner neutral variant */
   .white {
-    --color-background: #faf9f7;
-    --color-background-secondary: #fdfbf8;
+    --color-background: #f7f9fc;
+    --color-background-secondary: #eef4ff;
     --color-surface: #ffffff;
-    --color-surface-hover: #f3efe8;
-    --color-surface-active: #ebe4d8;
-    --color-surface-muted: #f5f0e8;
-    --color-border: #d9d1c3;
-    --color-border-muted: #e6ddd1;
-    --color-border-subtle: rgba(23, 22, 20, 0.09);
-    --color-mcp: #7865a0;
-    --shadow-soft: 0 1px 4px rgba(23, 22, 20, 0.06);
-    --shadow-card: 0 2px 6px rgba(23, 22, 20, 0.06), 0 1px 2px rgba(23, 22, 20, 0.05);
-    --shadow-elevated: 0 18px 42px rgba(23, 22, 20, 0.12), 0 4px 14px rgba(23, 22, 20, 0.07);
-    --color-accent: #c96943;
-    --color-accent-hover: #b65a37;
-    --color-accent-muted: #fde7db;
-    --color-text-primary: #171614;
-    --color-text-secondary: #4a433b;
-    --color-text-muted: #756d64;
-    --color-success: #166534;
-    --color-warning: #a16207;
-    --color-error: #dc2626;
+    --color-surface-hover: #f3f7ff;
+    --color-surface-active: #e8eefb;
+    --color-surface-muted: #f0f5ff;
+    --color-border: #dbe4f0;
+    --color-border-muted: #e6edf7;
+    --color-border-subtle: rgba(148, 163, 184, 0.18);
+    --color-mcp: #8b7cf6;
+    --shadow-soft: 0 1px 4px rgba(120, 138, 180, 0.08);
+    --shadow-card: 0 8px 24px rgba(120, 138, 180, 0.12), 0 2px 6px rgba(120, 138, 180, 0.08);
+    --shadow-elevated: 0 20px 48px rgba(120, 138, 180, 0.16), 0 6px 18px rgba(120, 138, 180, 0.1);
+    --color-accent: #5f74ff;
+    --color-accent-hover: #4d63f5;
+    --color-accent-muted: rgba(95, 116, 255, 0.16);
+    --color-text-primary: #1d2433;
+    --color-text-secondary: #5c6980;
+    --color-text-muted: #8d98ac;
+    --color-success: #47b36d;
+    --color-warning: #f2ab54;
+    --color-error: #ef6b87;
+  }
+
+  .white body {
+    background-image:
+      radial-gradient(circle at top left, rgba(95, 116, 255, 0.12), transparent 34%),
+      radial-gradient(circle at top right, rgba(107, 226, 190, 0.08), transparent 28%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82));
+    background-attachment: fixed;
   }
 
   * {

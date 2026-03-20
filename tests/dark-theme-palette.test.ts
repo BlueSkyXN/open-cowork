@@ -21,8 +21,9 @@ describe('theme palettes', () => {
   it('defines a distinct white theme palette instead of reusing the warm light tokens', () => {
     const source = fs.readFileSync(stylesPath, 'utf8');
     expect(source).toContain('.white {');
-    expect(source).toContain('--color-background: #faf9f7;');
+    expect(source).toContain('--color-background: #f7f9fc;');
     expect(source).toContain('--color-surface: #ffffff;');
-    expect(source).toContain('--color-text-primary: #171614;');
+    expect(source).toContain('--color-accent: #5f74ff;');
+    expect(source).toContain('.white body {');
   });
 });

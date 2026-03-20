@@ -218,7 +218,7 @@ if (!hasSingleInstanceLock) {
 let tray: Tray | null = null;
 const DARK_BG = '#171614';
 const LIGHT_BG = '#f5f3ed';
-const WHITE_BG = '#faf9f7';
+const WHITE_BG = '#f7f9fc';
 
 type ResolvedAppTheme = Exclude<AppTheme, 'system'>;
 
