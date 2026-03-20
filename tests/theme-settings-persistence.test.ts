@@ -5,18 +5,21 @@ import fs from 'node:fs';
 const mainIndexPath = path.resolve(process.cwd(), 'src/main/index.ts');
 const useIPCPath = path.resolve(process.cwd(), 'src/renderer/hooks/useIPC.ts');
 const storePath = path.resolve(process.cwd(), 'src/renderer/store/index.ts');
+const sidebarPath = path.resolve(process.cwd(), 'src/renderer/components/Sidebar.tsx');
 
 describe('theme settings persistence', () => {
   it('persists theme updates in the main process and applies them to native window state', () => {
     const source = fs.readFileSync(mainIndexPath, 'utf8');
 
     expect(source).toContain("const DARK_BG = '#171614';");
-    expect(source).toContain("const LIGHT_BG = '#f5f3ee';");
+    expect(source).toContain("const LIGHT_BG = '#f5f3ed';");
+    expect(source).toContain("const WHITE_BG = '#faf9f7';");
     expect(source).toContain("configStore.update({ theme: nextTheme });");
-    expect(source).toContain('nativeTheme.themeSource = theme;');
+    expect(source).toContain("nativeTheme.themeSource = theme === 'white' ? 'light' : theme;");
     expect(source).toContain('mainWindow.setBackgroundColor(');
+    expect(source).toContain("|| event.payload.theme === 'white'");
     expect(source).toContain("getSavedThemePreference() === 'system'");
-    expect(source).toContain('nativeTheme.shouldUseDarkColors ? DARK_BG : LIGHT_BG');
+    expect(source).toContain('return { shouldUseDarkColors: getSystemShouldUseDarkColors() };');
     expect(source).not.toContain("case 'settings.update':\n      // TODO: Implement settings update");
   });
 
@@ -35,5 +38,13 @@ describe('theme settings persistence', () => {
     expect(source).toContain("type: 'settings.update'");
     expect(source).toContain('setSettings: (updates) =>');
     expect(source).toContain('updateSettings: (updates) =>');
+  });
+
+  it('uses the sidebar theme button as a shortcut to explicit theme settings instead of a hidden cycle', () => {
+    const source = fs.readFileSync(sidebarPath, 'utf8');
+
+    expect(source).toContain("setSettingsTab('general');");
+    expect(source).toContain('const themeShortcutTitle =');
+    expect(source).not.toContain('const themeCycle: AppTheme[] =');
   });
 });

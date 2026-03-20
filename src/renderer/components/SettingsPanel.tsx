@@ -35,6 +35,7 @@ import {
 } from 'lucide-react';
 import { useWindowSize } from '../hooks/useWindowSize';
 import type {
+  AppTheme,
   Skill,
   PluginCatalogItemV2,
   InstalledPlugin,
@@ -4629,9 +4630,10 @@ function GeneralTab() {
     { code: 'zh', nativeName: '中文' },
   ];
 
-  const themeOptions = [
-    { value: 'light' as const, label: t('general.themeLight') },
+  const themeOptions: Array<{ value: AppTheme; label: string }> = [
     { value: 'dark' as const, label: t('general.themeDark') },
+    { value: 'light' as const, label: t('general.themeLight') },
+    { value: 'white' as const, label: t('general.themeWhite') },
     { value: 'system' as const, label: t('general.themeSystem', 'System') },
   ];
 
@@ -4640,15 +4642,15 @@ function GeneralTab() {
       {/* Theme */}
       <div className="space-y-3">
         <h4 className="text-sm font-medium text-text-primary">{t('general.appearance')}</h4>
-        <div className="flex gap-2">
+        <div className="grid grid-cols-2 gap-2 md:grid-cols-4">
           {themeOptions.map((opt) => (
             <button
               key={opt.value}
               onClick={() => updateSettings({ theme: opt.value })}
-              className={`flex-1 px-4 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
+              className={`w-full px-4 py-2.5 rounded-lg border-2 text-sm font-medium transition-all ${
                 settings.theme === opt.value
-                  ? 'border-accent bg-accent/5 text-text-primary'
-                  : 'border-border bg-surface hover:border-accent/50 text-text-secondary'
+                  ? 'border-accent bg-accent-muted text-text-primary shadow-soft'
+                  : 'border-border bg-surface hover:border-border-muted hover:bg-surface-hover text-text-secondary'
               }`}
             >
               {opt.label}

@@ -58,6 +58,32 @@
     --color-error: #dc2626;
   }
 
+  /* White theme override — cleaner neutral variant */
+  .white {
+    --color-background: #faf9f7;
+    --color-background-secondary: #fdfbf8;
+    --color-surface: #ffffff;
+    --color-surface-hover: #f3efe8;
+    --color-surface-active: #ebe4d8;
+    --color-surface-muted: #f5f0e8;
+    --color-border: #d9d1c3;
+    --color-border-muted: #e6ddd1;
+    --color-border-subtle: rgba(23, 22, 20, 0.09);
+    --color-mcp: #7865a0;
+    --shadow-soft: 0 1px 4px rgba(23, 22, 20, 0.06);
+    --shadow-card: 0 2px 6px rgba(23, 22, 20, 0.06), 0 1px 2px rgba(23, 22, 20, 0.05);
+    --shadow-elevated: 0 18px 42px rgba(23, 22, 20, 0.12), 0 4px 14px rgba(23, 22, 20, 0.07);
+    --color-accent: #c96943;
+    --color-accent-hover: #b65a37;
+    --color-accent-muted: #fde7db;
+    --color-text-primary: #171614;
+    --color-text-secondary: #4a433b;
+    --color-text-muted: #756d64;
+    --color-success: #166534;
+    --color-warning: #a16207;
+    --color-error: #dc2626;
+  }
+
   * {
     @apply border-border;
   }

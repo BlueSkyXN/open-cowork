@@ -4,7 +4,7 @@ import path from 'node:path';
 
 const stylesPath = path.resolve(process.cwd(), 'src/renderer/styles/globals.css');
 
-describe('dark theme palette', () => {
+describe('theme palettes', () => {
   it('uses a warmer charcoal palette for the default theme', () => {
     const source = fs.readFileSync(stylesPath, 'utf8');
     expect(source).toContain('--color-background: #171614;');
@@ -16,5 +16,13 @@ describe('dark theme palette', () => {
     const source = fs.readFileSync(stylesPath, 'utf8');
     expect(source).toContain('--color-accent: #d67a52;');
     expect(source).toContain('--color-accent-hover: #c56c46;');
+  });
+
+  it('defines a distinct white theme palette instead of reusing the warm light tokens', () => {
+    const source = fs.readFileSync(stylesPath, 'utf8');
+    expect(source).toContain('.white {');
+    expect(source).toContain('--color-background: #faf9f7;');
+    expect(source).toContain('--color-surface: #ffffff;');
+    expect(source).toContain('--color-text-primary: #171614;');
   });
 });

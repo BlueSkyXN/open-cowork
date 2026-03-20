@@ -73,8 +73,9 @@
   "general": {
     "appearance": "外观",
     "theme": "主题",
-    "themeLight": "浅色",
+    "themeLight": "暖黄",
     "themeDark": "深色",
+    "themeWhite": "白色",
     "themeSystem": "跟随系统",
     "language": "语言"
   },
@@ -584,7 +585,7 @@
     "previousWeek": "最近 7 天",
     "older": "更早",
     "settings": "设置",
-    "themeToggle": "切换主题",
+    "themeToggle": "主题",
     "manage": "管理",
     "selectAll": "全选",
     "deselectAll": "取消全选",

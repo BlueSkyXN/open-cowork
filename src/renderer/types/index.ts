@@ -429,7 +429,7 @@ export interface ExecutionContext {
 // App Config types
 export type ProviderType = 'openrouter' | 'anthropic' | 'custom' | 'openai' | 'gemini' | 'ollama';
 export type CustomProtocolType = 'anthropic' | 'openai' | 'gemini';
-export type AppTheme = 'dark' | 'light' | 'system';
+export type AppTheme = 'dark' | 'light' | 'white' | 'system';
 export type ProviderProfileKey =
   | 'openrouter'
   | 'anthropic'

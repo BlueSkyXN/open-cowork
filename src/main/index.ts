@@ -12,7 +12,7 @@
  * Dependencies: session-manager, config-store, mcp-manager, sandbox-adapter,
  *               skills-manager, scheduled-task-manager, nav-server, remote-manager
  */
-import { app, BrowserWindow, ipcMain, dialog, shell, Menu, nativeTheme, Tray } from 'electron';
+import { app, BrowserWindow, ipcMain, dialog, shell, Menu, nativeTheme, systemPreferences, Tray } from 'electron';
 import { join, resolve, dirname, isAbsolute, basename } from 'path';
 import * as fs from 'fs';
 import { execFileSync } from 'child_process';
@@ -217,7 +217,45 @@ if (!hasSingleInstanceLock) {
 // Tray instance (kept alive to prevent GC)
 let tray: Tray | null = null;
 const DARK_BG = '#171614';
-const LIGHT_BG = '#f5f3ee';
+const LIGHT_BG = '#f5f3ed';
+const WHITE_BG = '#faf9f7';
+
+type ResolvedAppTheme = Exclude<AppTheme, 'system'>;
+
+function getSystemShouldUseDarkColors(): boolean {
+  if (process.platform === 'darwin') {
+    return systemPreferences.getEffectiveAppearance() === 'dark';
+  }
+
+  if (process.platform === 'win32') {
+    return nativeTheme.shouldUseDarkColorsForSystemIntegratedUI;
+  }
+
+  return nativeTheme.shouldUseDarkColors;
+}
+
+function getWindowThemeColors(theme: ResolvedAppTheme) {
+  switch (theme) {
+    case 'dark':
+      return {
+        background: DARK_BG,
+        titleBar: DARK_BG,
+        titleBarSymbol: '#f1ece4',
+      };
+    case 'white':
+      return {
+        background: WHITE_BG,
+        titleBar: WHITE_BG,
+        titleBarSymbol: '#171614',
+      };
+    default:
+      return {
+        background: LIGHT_BG,
+        titleBar: LIGHT_BG,
+        titleBarSymbol: '#1a1a1a',
+      };
+  }
+}
 
 function buildMacMenu() {
   if (process.platform !== 'darwin') return;
@@ -347,10 +385,10 @@ function setupTray() {
 
 function getSavedThemePreference(): AppTheme {
   const theme = configStore.get('theme');
-  return theme === 'dark' || theme === 'system' ? theme : 'light';
+  return theme === 'dark' || theme === 'light' || theme === 'white' || theme === 'system' ? theme : 'light';
 }
 
-function resolveEffectiveTheme(theme: AppTheme): 'dark' | 'light' {
+function resolveEffectiveTheme(theme: AppTheme): ResolvedAppTheme {
   if (theme === 'system') {
     return nativeTheme.shouldUseDarkColors ? 'dark' : 'light';
   }
@@ -358,24 +396,14 @@ function resolveEffectiveTheme(theme: AppTheme): 'dark' | 'light' {
 }
 
 function applyNativeThemePreference(theme: AppTheme): void {
-  nativeTheme.themeSource = theme;
+  nativeTheme.themeSource = theme === 'white' ? 'light' : theme;
 }
 
 function createWindow() {
   const savedTheme = getSavedThemePreference();
   applyNativeThemePreference(savedTheme);
   const effectiveTheme = resolveEffectiveTheme(savedTheme);
-  const THEME = effectiveTheme === 'dark'
-    ? {
-        background: DARK_BG,
-        titleBar: DARK_BG,
-        titleBarSymbol: '#f1ece4',
-      }
-    : {
-        background: LIGHT_BG,
-        titleBar: LIGHT_BG,
-        titleBarSymbol: '#1a1a1a',
-      };
+  const THEME = getWindowThemeColors(effectiveTheme);
 
   // Platform-specific window configuration
   const isMac = process.platform === 'darwin';
@@ -837,7 +865,7 @@ app
       mainWindow.webContents.on('did-finish-load', () => {
         sendToRenderer({
           type: 'native-theme.changed',
-          payload: { shouldUseDarkColors: nativeTheme.shouldUseDarkColors },
+          payload: { shouldUseDarkColors: getSystemShouldUseDarkColors() },
         });
       });
     }
@@ -846,16 +874,15 @@ app
     nativeTheme.on('updated', () => {
       sendToRenderer({
         type: 'native-theme.changed',
-        payload: { shouldUseDarkColors: nativeTheme.shouldUseDarkColors },
+        payload: { shouldUseDarkColors: getSystemShouldUseDarkColors() },
       });
       if (
         getSavedThemePreference() === 'system'
         && mainWindow
         && !mainWindow.isDestroyed()
       ) {
-        mainWindow.setBackgroundColor(
-          nativeTheme.shouldUseDarkColors ? DARK_BG : LIGHT_BG
-        );
+        const systemTheme = getWindowThemeColors(resolveEffectiveTheme('system'));
+        mainWindow.setBackgroundColor(systemTheme.background);
       }
     });
 
@@ -1120,7 +1147,7 @@ ipcMain.handle('get-version', () => {
 
 ipcMain.handle('system.getTheme', () => {
   try {
-    return { shouldUseDarkColors: nativeTheme.shouldUseDarkColors };
+    return { shouldUseDarkColors: getSystemShouldUseDarkColors() };
   } catch (error) {
     logError('[IPC] Error getting theme:', error);
     return { shouldUseDarkColors: true };
@@ -2668,6 +2695,7 @@ async function handleClientEvent(event: ClientEvent): Promise<unknown> {
       if (
         event.payload.theme === 'dark'
         || event.payload.theme === 'light'
+        || event.payload.theme === 'white'
         || event.payload.theme === 'system'
       ) {
         const nextTheme = event.payload.theme as AppTheme;
@@ -2675,9 +2703,8 @@ async function handleClientEvent(event: ClientEvent): Promise<unknown> {
         applyNativeThemePreference(nextTheme);
         if (mainWindow && !mainWindow.isDestroyed()) {
           const effectiveTheme = resolveEffectiveTheme(nextTheme);
-          mainWindow.setBackgroundColor(
-            effectiveTheme === 'dark' ? DARK_BG : LIGHT_BG
-          );
+          const windowTheme = getWindowThemeColors(effectiveTheme);
+          mainWindow.setBackgroundColor(windowTheme.background);
         }
         sendToRenderer({
           type: 'config.status',

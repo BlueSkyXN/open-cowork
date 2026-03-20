@@ -36,7 +36,7 @@ import { API_PROVIDER_PRESETS, PI_AI_CURATED_PRESETS } from '../../shared/api-mo
  */
 export type ProviderType = 'openrouter' | 'anthropic' | 'custom' | 'openai' | 'gemini' | 'ollama';
 export type CustomProtocolType = 'anthropic' | 'openai' | 'gemini';
-export type AppTheme = 'dark' | 'light' | 'system';
+export type AppTheme = 'dark' | 'light' | 'white' | 'system';
 export type ProviderProfileKey =
   | 'openrouter'
   | 'anthropic'
@@ -275,7 +275,7 @@ const PROFILE_KEYS: ProviderProfileKey[] = [
   'custom:openai',
   'custom:gemini',
 ];
-const VALID_THEMES: AppTheme[] = ['dark', 'light', 'system'];
+const VALID_THEMES: AppTheme[] = ['dark', 'light', 'white', 'system'];
 
 function isProviderType(value: unknown): value is ProviderType {
   return value === 'openrouter' || value === 'anthropic' || value === 'custom' || value === 'openai' || value === 'gemini' || value === 'ollama';

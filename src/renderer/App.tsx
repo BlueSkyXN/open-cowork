@@ -79,10 +79,10 @@ function App() {
         ? (systemDarkMode ? 'dark' : 'light')
         : settings.theme;
 
-    if (effectiveTheme === 'light') {
-      document.documentElement.classList.add('light');
-    } else {
-      document.documentElement.classList.remove('light');
+    document.documentElement.classList.remove('light', 'white');
+
+    if (effectiveTheme === 'light' || effectiveTheme === 'white') {
+      document.documentElement.classList.add(effectiveTheme);
     }
   }, [settings.theme, systemDarkMode]);
 

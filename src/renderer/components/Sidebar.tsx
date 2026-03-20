@@ -6,6 +6,7 @@ import {
   ChevronLeft,
   ChevronRight,
   Trash2,
+  Circle,
   Moon,
   Sun,
   Monitor,
@@ -15,7 +16,7 @@ import {
   ListChecks,
   Check,
 } from 'lucide-react';
-import type { Session } from '../types';
+import type { AppTheme, Session } from '../types';
 
 const sidebarLogoSrc = new URL('../../../resources/logo.png', import.meta.url).href;
 
@@ -35,11 +36,11 @@ export function Sidebar() {
   const setActiveSession = useAppStore((s) => s.setActiveSession);
   const setMessages = useAppStore((s) => s.setMessages);
   const setTraceSteps = useAppStore((s) => s.setTraceSteps);
-  const updateSettings = useAppStore((s) => s.updateSettings);
   const isConfigured = useAppStore((s) => s.isConfigured);
   const sidebarCollapsed = useAppStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useAppStore((s) => s.toggleSidebar);
   const setShowSettings = useAppStore((s) => s.setShowSettings);
+  const setSettingsTab = useAppStore((s) => s.setSettingsTab);
   const { deleteSession, batchDeleteSessions, getSessionMessages, getSessionTraceSteps, isElectron } = useIPC();
   const [hoveredSession, setHoveredSession] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
@@ -197,16 +198,27 @@ export function Sidebar() {
     deleteSession(sessionId);
   };
 
-  const toggleTheme = () => {
-    const next = settings.theme === 'dark' ? 'light' : settings.theme === 'light' ? 'system' : 'dark';
-    updateSettings({ theme: next });
+  const openThemeSettings = () => {
+    setSettingsTab('general');
+    setShowSettings(true);
   };
 
   const themeIcon = settings.theme === 'dark'
-    ? <Sun className="w-4 h-4" />
+    ? <Moon className="w-4 h-4" />
     : settings.theme === 'light'
-      ? <Moon className="w-4 h-4" />
-      : <Monitor className="w-4 h-4" />;
+      ? <Sun className="w-4 h-4" />
+      : settings.theme === 'white'
+        ? <Circle className="w-4 h-4" />
+        : <Monitor className="w-4 h-4" />;
+
+  const currentThemeLabelByTheme: Record<AppTheme, string> = {
+    dark: t('general.themeDark'),
+    light: t('general.themeLight'),
+    white: t('general.themeWhite'),
+    system: t('general.themeSystem', 'System'),
+  };
+  const currentThemeLabel = currentThemeLabelByTheme[settings.theme];
+  const themeShortcutTitle = `${t('sidebar.themeToggle')}: ${currentThemeLabel}`;
 
   if (sidebarCollapsed) {
     return (
@@ -240,9 +252,10 @@ export function Sidebar() {
 
         <div className="px-3 py-3 border-t border-border-muted flex flex-col items-center gap-2">
           <button
-            onClick={toggleTheme}
+            onClick={openThemeSettings}
             className="w-9 h-9 rounded-2xl flex items-center justify-center hover:bg-surface-hover transition-colors text-text-secondary"
-            title={t('sidebar.themeToggle')}
+            title={themeShortcutTitle}
+            aria-label={themeShortcutTitle}
           >
             {themeIcon}
           </button>
@@ -475,9 +488,10 @@ export function Sidebar() {
           </button>
 
           <button
-            onClick={toggleTheme}
+            onClick={openThemeSettings}
             className="w-8 h-8 rounded-xl flex items-center justify-center text-text-secondary hover:text-text-primary hover:bg-surface-hover transition-colors flex-shrink-0"
-            title={t('sidebar.themeToggle')}
+            title={themeShortcutTitle}
+            aria-label={themeShortcutTitle}
           >
             {themeIcon}
           </button>

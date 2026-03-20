@@ -73,8 +73,9 @@
   "general": {
     "appearance": "Appearance",
     "theme": "Theme",
-    "themeLight": "Light",
+    "themeLight": "Warm",
     "themeDark": "Dark",
+    "themeWhite": "White",
     "themeSystem": "System",
     "language": "Language"
   },
@@ -584,7 +585,7 @@
     "previousWeek": "Previous 7 Days",
     "older": "Older",
     "settings": "Settings",
-    "themeToggle": "Toggle theme",
+    "themeToggle": "Theme",
     "manage": "Manage",
     "selectAll": "Select All",
     "deselectAll": "Deselect All",
