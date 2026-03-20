@@ -218,7 +218,8 @@ if (!hasSingleInstanceLock) {
 let tray: Tray | null = null;
 const DARK_BG = '#171614';
 const LIGHT_BG = '#f5f3ed';
-const WHITE_BG = '#f7f9fc';
+const WHITE_BG = '#fafafa';
+const BLUE_BG = '#f7f9fc';
 
 type ResolvedAppTheme = Exclude<AppTheme, 'system'>;
 
@@ -246,7 +247,13 @@ function getWindowThemeColors(theme: ResolvedAppTheme) {
       return {
         background: WHITE_BG,
         titleBar: WHITE_BG,
-        titleBarSymbol: '#171614',
+        titleBarSymbol: '#1a1a1a',
+      };
+    case 'blue':
+      return {
+        background: BLUE_BG,
+        titleBar: BLUE_BG,
+        titleBarSymbol: '#1d2433',
       };
     default:
       return {
@@ -385,7 +392,7 @@ function setupTray() {
 
 function getSavedThemePreference(): AppTheme {
   const theme = configStore.get('theme');
-  return theme === 'dark' || theme === 'light' || theme === 'white' || theme === 'system' ? theme : 'light';
+  return theme === 'dark' || theme === 'light' || theme === 'white' || theme === 'blue' || theme === 'system' ? theme : 'light';
 }
 
 function resolveEffectiveTheme(theme: AppTheme): ResolvedAppTheme {
@@ -396,7 +403,7 @@ function resolveEffectiveTheme(theme: AppTheme): ResolvedAppTheme {
 }
 
 function applyNativeThemePreference(theme: AppTheme): void {
-  nativeTheme.themeSource = theme === 'white' ? 'light' : theme;
+  nativeTheme.themeSource = (theme === 'white' || theme === 'blue') ? 'light' : theme;
 }
 
 function createWindow() {
@@ -2696,6 +2703,7 @@ async function handleClientEvent(event: ClientEvent): Promise<unknown> {
         event.payload.theme === 'dark'
         || event.payload.theme === 'light'
         || event.payload.theme === 'white'
+        || event.payload.theme === 'blue'
         || event.payload.theme === 'system'
       ) {
         const nextTheme = event.payload.theme as AppTheme;

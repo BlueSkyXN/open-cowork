@@ -4634,6 +4634,7 @@ function GeneralTab() {
     { value: 'dark' as const, label: t('general.themeDark') },
     { value: 'light' as const, label: t('general.themeLight') },
     { value: 'white' as const, label: t('general.themeWhite') },
+    { value: 'blue' as const, label: t('general.themeBlue') },
     { value: 'system' as const, label: t('general.themeSystem', 'System') },
   ];
 

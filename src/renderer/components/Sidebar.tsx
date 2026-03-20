@@ -209,12 +209,15 @@ export function Sidebar() {
       ? <Sun className="w-4 h-4" />
       : settings.theme === 'white'
         ? <Circle className="w-4 h-4" />
-        : <Monitor className="w-4 h-4" />;
+        : settings.theme === 'blue'
+          ? <Circle className="w-4 h-4" />
+          : <Monitor className="w-4 h-4" />;
 
   const currentThemeLabelByTheme: Record<AppTheme, string> = {
     dark: t('general.themeDark'),
     light: t('general.themeLight'),
     white: t('general.themeWhite'),
+    blue: t('general.themeBlue'),
     system: t('general.themeSystem', 'System'),
   };
   const currentThemeLabel = currentThemeLabelByTheme[settings.theme];
