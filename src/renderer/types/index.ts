@@ -441,12 +441,18 @@ export type ProviderProfileKey =
   | 'custom:gemini';
 export type ConfigSetId = string;
 
+export type ThinkingLevel = 'auto' | 'off' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh';
+
 export interface ProviderProfile {
   apiKey: string;
   baseUrl?: string;
   model: string;
   contextWindow?: number;
   maxTokens?: number;
+  customHeaders?: Record<string, string>;
+  enableVision?: boolean;
+  enableTools?: boolean;
+  thinkingBudget?: ThinkingLevel;
 }
 
 export interface ApiConfigSet {
@@ -475,6 +481,10 @@ export interface AppConfig {
   model: string;
   contextWindow?: number;
   maxTokens?: number;
+  customHeaders?: Record<string, string>;
+  enableVision?: boolean;
+  enableTools?: boolean;
+  thinkingBudget?: ThinkingLevel;
   activeProfileKey: ProviderProfileKey;
   profiles: Partial<Record<ProviderProfileKey, ProviderProfile>>;
   activeConfigSetId: ConfigSetId;

@@ -12,6 +12,7 @@ import type {
   ProviderProfileKey,
   ProviderPresets,
   ProviderType,
+  ThinkingLevel,
 } from '../types';
 import { isLoopbackBaseUrl } from '../../shared/network/loopback';
 import {
@@ -44,6 +45,10 @@ interface UIProviderProfile {
   useCustomModel: boolean;
   contextWindow: string;
   maxTokens: string;
+  customHeaders: Record<string, string>;
+  enableVision: boolean;
+  enableTools: boolean;
+  thinkingBudget: ThinkingLevel;
 }
 
 interface ConfigStateSnapshot {
@@ -201,6 +206,10 @@ function defaultProfileForKey(
     useCustomModel: prefersCustomInput,
     contextWindow: '',
     maxTokens: '',
+    customHeaders: {},
+    enableVision: true,
+    enableTools: true,
+    thinkingBudget: 'auto' as ThinkingLevel,
   };
 }
 
@@ -258,6 +267,10 @@ function normalizeProfile(
       useCustomModel: true,
       contextWindow: '',
       maxTokens: '',
+      customHeaders: {},
+      enableVision: true,
+      enableTools: true,
+      thinkingBudget: 'auto' as ThinkingLevel,
     };
   }
 
@@ -276,6 +289,10 @@ function normalizeProfile(
     useCustomModel: !hasPresetModel,
     contextWindow: profile?.contextWindow ? String(profile.contextWindow) : '',
     maxTokens: profile?.maxTokens ? String(profile.maxTokens) : '',
+    customHeaders: profile?.customHeaders || {},
+    enableVision: profile?.enableVision !== false,
+    enableTools: profile?.enableTools !== false,
+    thinkingBudget: (profile?.thinkingBudget || 'auto') as ThinkingLevel,
   };
 }
 
@@ -348,13 +365,20 @@ function toPersistedProfiles(
     const finalModel = profile.useCustomModel
       ? profile.customModel.trim() || profile.model
       : profile.model;
-    persisted[key] = {
+    const p: ProviderProfile = {
       apiKey: profile.apiKey,
       baseUrl: profile.baseUrl.trim() || undefined,
       model: finalModel,
       contextWindow: profile.contextWindow ? Number(profile.contextWindow) : undefined,
       maxTokens: profile.maxTokens ? Number(profile.maxTokens) : undefined,
     };
+    if (Object.keys(profile.customHeaders).length > 0) {
+      p.customHeaders = profile.customHeaders;
+    }
+    if (!profile.enableVision) p.enableVision = false;
+    if (!profile.enableTools) p.enableTools = false;
+    if (profile.thinkingBudget !== 'auto') p.thinkingBudget = profile.thinkingBudget;
+    persisted[key] = p;
   }
   return persisted;
 }
@@ -373,6 +397,10 @@ export function buildApiConfigDraftSignature(
       apiKey: persisted[key]?.apiKey || '',
       baseUrl: persisted[key]?.baseUrl || '',
       model: persisted[key]?.model || '',
+      customHeaders: persisted[key]?.customHeaders || {},
+      enableVision: persisted[key]?.enableVision,
+      enableTools: persisted[key]?.enableTools,
+      thinkingBudget: persisted[key]?.thinkingBudget,
     })),
   });
 }
@@ -705,6 +733,10 @@ export function useApiConfigState(options: UseApiConfigStateOptions = {}) {
       || modelOptions.length === 0;
   const contextWindow = currentProfile.contextWindow;
   const maxTokens = currentProfile.maxTokens;
+  const customHeaders = currentProfile.customHeaders;
+  const enableVision = currentProfile.enableVision;
+  const enableTools = currentProfile.enableTools;
+  const thinkingBudget = currentProfile.thinkingBudget;
   const detectedProviderSetup = useMemo(
     () => (provider === 'custom' ? detectCommonProviderSetup(baseUrl) : null),
     [baseUrl, provider]
@@ -971,6 +1003,34 @@ export function useApiConfigState(options: UseApiConfigStateOptions = {}) {
   const setMaxTokens = useCallback(
     (value: string) => {
       updateActiveProfile((prev) => ({ ...prev, maxTokens: value }));
+    },
+    [updateActiveProfile]
+  );
+
+  const setCustomHeaders = useCallback(
+    (value: Record<string, string>) => {
+      updateActiveProfile((prev) => ({ ...prev, customHeaders: value }));
+    },
+    [updateActiveProfile]
+  );
+
+  const setEnableVision = useCallback(
+    (value: boolean) => {
+      updateActiveProfile((prev) => ({ ...prev, enableVision: value }));
+    },
+    [updateActiveProfile]
+  );
+
+  const setEnableTools = useCallback(
+    (value: boolean) => {
+      updateActiveProfile((prev) => ({ ...prev, enableTools: value }));
+    },
+    [updateActiveProfile]
+  );
+
+  const setThinkingBudget = useCallback(
+    (value: ThinkingLevel) => {
+      updateActiveProfile((prev) => ({ ...prev, thinkingBudget: value }));
     },
     [updateActiveProfile]
   );
@@ -1812,6 +1872,10 @@ export function useApiConfigState(options: UseApiConfigStateOptions = {}) {
     useCustomModel,
     contextWindow,
     maxTokens,
+    customHeaders,
+    enableVision,
+    enableTools,
+    thinkingBudget,
     modelInputPlaceholder: modelInputGuidance.placeholder,
     modelInputHint: modelInputGuidance.hint,
     enableThinking,
@@ -1851,6 +1915,10 @@ export function useApiConfigState(options: UseApiConfigStateOptions = {}) {
     setCustomModel,
     setContextWindow,
     setMaxTokens,
+    setCustomHeaders,
+    setEnableVision,
+    setEnableTools,
+    setThinkingBudget,
     toggleCustomModel,
     setEnableThinking,
     applyCommonProviderSetup,

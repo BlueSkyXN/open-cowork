@@ -496,6 +496,14 @@ function APISettingsTab() {
     setCustomModel,
     setContextWindow,
     setMaxTokens,
+    setCustomHeaders,
+    setEnableVision,
+    setEnableTools,
+    setThinkingBudget,
+    customHeaders,
+    enableVision,
+    enableTools,
+    thinkingBudget,
     toggleCustomModel,
     setEnableThinking,
     applyCommonProviderSetup,
@@ -813,6 +821,124 @@ function APISettingsTab() {
               </div>
             )}
           </label>
+        </div>
+      </div>
+
+      {/* Advanced Model Configuration */}
+      <div className="space-y-3 py-5 border-b border-border-muted">
+        <div className="text-sm font-medium text-text-primary mb-2">{t('api.advancedConfig')}</div>
+
+        {/* Thinking Budget */}
+        <div>
+          <label className="block text-xs font-medium text-text-secondary mb-1">
+            {t('api.thinkingBudget')}
+          </label>
+          <select
+            value={thinkingBudget}
+            onChange={(e) => setThinkingBudget(e.target.value as import('../types').ThinkingLevel)}
+            className="w-full px-3 py-2 rounded-lg bg-background border border-border text-text-primary text-sm focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent transition-all"
+          >
+            <option value="auto">{t('api.thinkingBudgetAuto')}</option>
+            <option value="off">{t('api.thinkingBudgetOff')}</option>
+            <option value="minimal">Minimal</option>
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+            <option value="xhigh">X-High</option>
+          </select>
+          <p className="text-xs text-text-muted mt-1">{t('api.thinkingBudgetHint')}</p>
+        </div>
+
+        {/* Vision & Tools Toggles */}
+        <div className="grid grid-cols-2 gap-4">
+          <div className="flex items-start gap-2 text-xs text-text-muted">
+            <input
+              type="checkbox"
+              id="enable-vision"
+              checked={enableVision}
+              onChange={(e) => setEnableVision(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded border-border text-accent focus:ring-accent"
+            />
+            <label htmlFor="enable-vision" className="space-y-0.5 flex-1">
+              <div className="text-text-primary font-medium">{t('api.enableVision')}</div>
+              <div>{t('api.enableVisionHint')}</div>
+            </label>
+          </div>
+          <div className="flex items-start gap-2 text-xs text-text-muted">
+            <input
+              type="checkbox"
+              id="enable-tools"
+              checked={enableTools}
+              onChange={(e) => setEnableTools(e.target.checked)}
+              className="mt-0.5 w-4 h-4 rounded border-border text-accent focus:ring-accent"
+            />
+            <label htmlFor="enable-tools" className="space-y-0.5 flex-1">
+              <div className="text-text-primary font-medium">{t('api.enableTools')}</div>
+              <div>{t('api.enableToolsHint')}</div>
+            </label>
+          </div>
+        </div>
+
+        {/* Custom Headers */}
+        <div>
+          <label className="block text-xs font-medium text-text-secondary mb-1">
+            {t('api.customHeaders')}
+          </label>
+          <div className="space-y-2">
+            {Object.entries(customHeaders).map(([key, value], idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                <input
+                  type="text"
+                  defaultValue={key}
+                  placeholder="Header-Name"
+                  onBlur={(e) => {
+                    const newKey = e.target.value.trim();
+                    if (newKey && newKey !== key) {
+                      const entries = Object.entries(customHeaders);
+                      const next: Record<string, string> = {};
+                      for (const [k, v] of entries) {
+                        next[k === key ? newKey : k] = v;
+                      }
+                      setCustomHeaders(next);
+                    }
+                  }}
+                  className="flex-1 px-2 py-1.5 rounded bg-background border border-border text-text-primary text-xs font-mono"
+                />
+                <input
+                  type="text"
+                  value={value}
+                  placeholder="value"
+                  onChange={(e) => {
+                    const next = { ...customHeaders, [key]: e.target.value };
+                    setCustomHeaders(next);
+                  }}
+                  className="flex-1 px-2 py-1.5 rounded bg-background border border-border text-text-primary text-xs font-mono"
+                />
+                <button
+                  type="button"
+                  onClick={() => {
+                    const next = { ...customHeaders };
+                    delete next[key];
+                    setCustomHeaders(next);
+                  }}
+                  className="px-2 py-1.5 rounded bg-error/10 text-error text-xs hover:bg-error/20 transition-colors"
+                >
+                  ✕
+                </button>
+              </div>
+            ))}
+            <button
+              type="button"
+              onClick={() => {
+                const newKey = `X-Custom-${Object.keys(customHeaders).length + 1}`;
+                setCustomHeaders({ ...customHeaders, [newKey]: '' });
+              }}
+              className="text-xs text-accent hover:text-accent-hover transition-colors"
+            >
+              + {t('api.addHeader')}
+            </button>
+          </div>
+          <p className="text-xs text-text-muted mt-1">{t('api.customHeadersHint')}</p>
         </div>
       </div>
 

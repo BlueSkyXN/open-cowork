@@ -129,6 +129,19 @@ function lookupModelSpecs(modelId: string): { contextWindow: number; maxTokens: 
   return undefined;
 }
 
+export interface SyntheticModelOptions {
+  modelId: string;
+  provider: string;
+  protocol: string;
+  baseUrl?: string;
+  apiOverride?: string;
+  reasoning?: boolean;
+  contextWindow?: number;
+  maxTokens?: number;
+  headers?: Record<string, string>;
+  enableVision?: boolean;
+}
+
 export function buildSyntheticPiModel(
   modelId: string,
   provider: string,
@@ -138,22 +151,29 @@ export function buildSyntheticPiModel(
   reasoning?: boolean,
   contextWindow?: number,
   maxTokens?: number,
+  headers?: Record<string, string>,
+  enableVision?: boolean,
 ): Model<Api> {
   const api = apiOverride || inferPiApi(protocol);
   const autoReasoning = reasoning ?? REASONING_MODEL_PATTERN.test(modelId);
   const knownSpecs = lookupModelSpecs(modelId);
-  return {
+  const input: ('text' | 'image')[] = enableVision === false ? ['text'] : ['text', 'image'];
+  const model: Model<Api> = {
     id: modelId,
     name: modelId,
     api,
     provider,
     baseUrl: baseUrl || '',
     reasoning: autoReasoning,
-    input: ['text', 'image'],
+    input,
     cost: { input: 0, output: 0, cacheRead: 0, cacheWrite: 0 },
     contextWindow: contextWindow || knownSpecs?.contextWindow || 128000,
     maxTokens: maxTokens || knownSpecs?.maxTokens || 16384,
   } as Model<Api>;
+  if (headers && Object.keys(headers).length > 0) {
+    (model as unknown as Record<string, unknown>).headers = headers;
+  }
+  return model;
 }
 
 export function resolveSyntheticPiModelFallback(

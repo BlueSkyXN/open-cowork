@@ -1210,6 +1210,8 @@ ${hints.join('\n')}
           undefined,
           runtimeConfig.contextWindow,
           runtimeConfig.maxTokens,
+          runtimeConfig.customHeaders,
+          runtimeConfig.enableVision,
         );
         // Apply the same runtime overrides (developer role compat, base URL, API downgrade)
         // that resolvePiRegistryModel applies to registry models
@@ -1222,6 +1224,17 @@ ${hints.join('\n')}
         logCtxWarn('[ClaudeAgentRunner] Model not in pi-ai registry, using synthetic model:', modelString, '→', piModel.api);
       }
       logCtx('[ClaudeAgentRunner] Resolved pi-ai model:', piModel.provider, piModel.id);
+
+      // Apply per-profile overrides: custom headers, vision toggle
+      if (runtimeConfig.customHeaders && Object.keys(runtimeConfig.customHeaders).length > 0) {
+        const existingHeaders = (piModel as unknown as Record<string, unknown>).headers as Record<string, string> | undefined;
+        piModel = { ...piModel, headers: { ...existingHeaders, ...runtimeConfig.customHeaders } } as typeof piModel;
+        logCtx('[ClaudeAgentRunner] Applied custom headers:', Object.keys(runtimeConfig.customHeaders));
+      }
+      if (runtimeConfig.enableVision === false) {
+        piModel = { ...piModel, input: ['text'] };
+        logCtx('[ClaudeAgentRunner] Vision disabled by profile config');
+      }
 
       // For Ollama: query actual context window from /api/show if user hasn't configured one
       const provider = runtimeConfig.provider || 'anthropic';
@@ -1355,7 +1368,12 @@ ${hints.join('\n')}
       const enableThinking = configStore.get('enableThinking') ?? false;
       logCtx('[ClaudeAgentRunner] Enable thinking mode:', enableThinking);
       type PiThinkingLevel = 'off' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh';
-      const thinkingLevel: PiThinkingLevel = enableThinking ? 'medium' : 'off';
+      // thinkingBudget from profile takes precedence; 'auto' falls back to enableThinking toggle
+      const profileThinkingBudget = runtimeConfig.thinkingBudget;
+      const thinkingLevel: PiThinkingLevel = profileThinkingBudget && profileThinkingBudget !== 'auto'
+        ? profileThinkingBudget as PiThinkingLevel
+        : (enableThinking ? 'medium' : 'off');
+      logCtx('[ClaudeAgentRunner] Thinking level resolved:', thinkingLevel, `(budget=${profileThinkingBudget || 'auto'}, toggle=${enableThinking})`);
       const sessionRuntimeSignature = buildPiSessionRuntimeSignature({
         configProvider: runtimeConfig.provider,
         customProtocol: runtimeConfig.customProtocol,
@@ -1669,8 +1687,16 @@ Tool routing:
       // Diagnostic: log tools being passed to SDK (helps debug Ollama tool use)
       logCtx(`[ClaudeAgentRunner] Session reuse check: cached=${!!cachedSession}`);
       logCtx(`[ClaudeAgentRunner] Model=${piModel.id}, thinkingLevel=${thinkingLevel}`);
-      log(`[ClaudeAgentRunner] Built-in tools (${wrappedTools.length}): ${wrappedTools.map((t: { name?: string; type?: string }) => t.name || t.type).join(', ')}`);
-      log(`[ClaudeAgentRunner] Custom MCP tools (${mcpCustomTools.length}): ${mcpCustomTools.map(t => t.name).join(', ')}`);
+
+      // enableTools: when false, pass empty tool arrays to disable all tool use
+      const toolsDisabled = runtimeConfig.enableTools === false;
+      const effectiveTools = toolsDisabled ? [] : wrappedTools;
+      const effectiveMcpTools = toolsDisabled ? [] : mcpCustomTools;
+      if (toolsDisabled) {
+        logCtx('[ClaudeAgentRunner] Tool use disabled by profile config');
+      }
+      log(`[ClaudeAgentRunner] Built-in tools (${effectiveTools.length}): ${effectiveTools.map((t: { name?: string; type?: string }) => t.name || t.type).join(', ')}`);
+      log(`[ClaudeAgentRunner] Custom MCP tools (${effectiveMcpTools.length}): ${effectiveMcpTools.map(t => t.name).join(', ')}`);
 
       let piSession: PiAgentSession;
       if (cachedSession) {
@@ -1748,8 +1774,8 @@ Tool routing:
           thinkingLevel,
           authStorage,
           modelRegistry,
-          tools: wrappedTools as unknown as ReturnType<typeof createCodingTools>,
-          customTools: mcpCustomTools,
+          tools: effectiveTools as unknown as ReturnType<typeof createCodingTools>,
+          customTools: effectiveMcpTools,
           sessionManager: PiSessionManager.inMemory(),
           settingsManager: PiSettingsManager.inMemory({
             compaction: compactionSettings,

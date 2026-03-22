@@ -55,12 +55,18 @@ export interface CreateConfigSetPayload {
   fromSetId?: string;
 }
 
+export type ThinkingLevel = 'auto' | 'off' | 'minimal' | 'low' | 'medium' | 'high' | 'xhigh';
+
 export interface ProviderProfile {
   apiKey: string;
   baseUrl?: string;
   model: string;
   contextWindow?: number;
   maxTokens?: number;
+  customHeaders?: Record<string, string>;
+  enableVision?: boolean;
+  enableTools?: boolean;
+  thinkingBudget?: ThinkingLevel;
 }
 
 export interface ApiConfigSet {
@@ -88,6 +94,12 @@ export interface AppConfig {
   model: string;
   contextWindow?: number;
   maxTokens?: number;
+
+  // Advanced model configuration (projected from active profile)
+  customHeaders?: Record<string, string>;
+  enableVision?: boolean;
+  enableTools?: boolean;
+  thinkingBudget?: ThinkingLevel;
 
   // Active profile
   activeProfileKey: ProviderProfileKey;
@@ -555,6 +567,10 @@ export class ConfigStore {
     model: string;
     contextWindow?: number;
     maxTokens?: number;
+    customHeaders?: Record<string, string>;
+    enableVision?: boolean;
+    enableTools?: boolean;
+    thinkingBudget?: ThinkingLevel;
     enableThinking: boolean;
   } {
     const profiles = this.cloneProfiles(configSet.profiles);
@@ -573,6 +589,10 @@ export class ConfigStore {
       model: activeProfile.model,
       contextWindow: activeProfile.contextWindow,
       maxTokens: activeProfile.maxTokens,
+      customHeaders: activeProfile.customHeaders,
+      enableVision: activeProfile.enableVision,
+      enableTools: activeProfile.enableTools,
+      thinkingBudget: activeProfile.thinkingBudget,
       enableThinking: toBoolean(configSet.enableThinking, false),
     };
   }
@@ -830,6 +850,12 @@ export class ConfigStore {
       apiKey: projected.apiKey,
       baseUrl: projected.baseUrl,
       model: projected.model,
+      contextWindow: projected.contextWindow,
+      maxTokens: projected.maxTokens,
+      customHeaders: projected.customHeaders,
+      enableVision: projected.enableVision,
+      enableTools: projected.enableTools,
+      thinkingBudget: projected.thinkingBudget,
       activeProfileKey: projected.activeProfileKey,
       profiles: projected.profiles,
       enableThinking: projected.enableThinking,
